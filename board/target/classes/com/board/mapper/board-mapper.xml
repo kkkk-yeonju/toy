@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.board.mapper.BoardMapper">
+	<sql id="boardBasicColumns">
+		title, writer, content
+	</sql>
+	
+	<!-- insert가 완료된 후 keyColumn(resumeNo)의 값을 vo의 keyProperty(boardNo)에 저장 -->
+	<insert id="insertBoard" parameterType="com.board.vo.Board"
+			useGeneratedKeys="true" keyColumn="boardNo" keyProperty="boardNo">
+		INSERT INTO board (title, writer, content)
+		VALUES (#{ title }, #{ writer }, #{ content })
+	</insert>
+	
+	<select id="selectBoardListCnt" resultType="int" parameterType="hashmap">
+		select count(boardno) as totalCount
+		from board
+		<if test="keyword != ''">
+			where title like concat('%', #{ keyword }, '%')
+			or writer like concat('%', #{ keyword }, '%')
+		</if>
+	</select>
+	
+	<select id="selectBoardList" resultType="Board" parameterType="hashmap">
+		select boardno, title, writer, regDate, view
+		from board
+		<if test="keyword != ''">
+			where title like concat('%', #{ keyword }, '%')
+			or writer like concat('%', #{ keyword }, '%')
+		</if>
+		order by boardno desc
+		limit #{startList}, #{listSize}
+	</select>
+	
+	<select id="selectBoardByBoardNo" resultType="Board" parameterType="int">
+		select boardNo, title, writer, content, regDate, view
+		from board
+		where boardno = #{ boardNo }
+	</select>
+	
+	<update id="updateBoard" parameterType="Board">
+		update board
+		set title = #{ title }
+			, writer = #{ writer }
+			, content = #{ content }
+		where boardno = #{ boardNo }
+	</update>
+	
+	<delete id="deleteBoard" parameterType="int">
+		delete from board
+		where boardno = #{ boardNo }
+	</delete>
+	
+	<!-- 댓글 -->
+	<insert id="insertComment" parameterType="Comment">
+		insert into comment
+		(
+			boardno, 
+			writer, 
+			content, 
+			groupno, 
+			step, 
+			depth
+		)
+		values
+		(
+			#{ boardNo },
+			#{ writer },
+			#{ content },
+			(SELECT LAST_INSERT_ID()),
+			1,
+			0
+		)
+	</insert>
+	
+	<select id="selectCommentListByBoardNo" resultType="Comment" parameterType="int">
+		select commentno, writer, content, groupno, step, depth, regdate
+		from comment
+		where boardno = #{ boardNo }
+		order by groupno desc, step asc
+	</select>
+	
+	<delete id="deleteComment" parameterType="int">
+		delete from comment
+		where commentno = #{ commentNo }
+	</delete>
+	
+	<update id="updateComment" parameterType="Comment">
+		update comment
+		set writer = #{ writer } 
+			, content = #{ content } 
+		where commentno = #{ commentNo }
+	</update>
+	
+	<!-- 대댓글 -->
+	<select id="selectCommentByCommentNo" resultType="Comment" parameterType="int">
+		select commentno, boardno, writer, content, regdate, groupno, step, depth 
+		from comment
+		where commentno = #{ commentNo }
+	</select>
+	
+	<!-- 쿼리 분석하기!! -->
+	<update id="updateCommentStep" parameterType="Comment">
+		update comment
+		set step = step + 1
+		where groupno = #{ groupNo } and step <![CDATA[>]]> #{ step }
+	</update>
+	
+	<insert id="insertRecomment" parameterType="Comment">
+		insert into comment
+		(
+			boardno,
+			writer,
+			content,
+			groupno,
+			step,
+			depth
+		)
+		values
+		(
+			#{ boardNo },
+			#{ writer },
+			#{ content },
+			#{ groupNo },
+			#{ step },
+			#{ depth }
+		)
+	</insert>
+	
+	<!-- id별 알람갯수 -->
+	<select id="selectCountAlarmById" resultType="Integer" parameterType="string">
+		select count(alarmno)
+		from alarm
+		where receiver = #{ receiver } and readcheck = 0
+	</select>
+	
+	<insert id="insertAlarm" parameterType="Alarm">
+		insert into alarm (receiver, sender, content, readcheck)
+		values(#{ receiver }, #{ sender }, #{ content }, #{ readCheck })
+	</insert>
+	
+	<select id="selectAlarmById" resultType="Alarm" parameterType="string">
+		select alarmno, receiver, sender, content, regdate, readcheck
+		from alarm
+		where receiver = #{ receiver } and readcheck = 0
+		order by alarmno desc
+	</select>
+	
+	<update id="updateAlarmReadCheck" parameterType="int">
+		update alarm
+		set readcheck = true
+		where alarmno = #{ alarmNo }
+	</update>
+	
+</mapper>

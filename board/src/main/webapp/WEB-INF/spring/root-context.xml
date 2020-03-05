@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:env.mariadb.properties" />
+	</bean>
+	
+	<!-- Apache Commons DBCP -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="${ds.driver}" />
+		<property name="url" value="${ds.url}" />
+		<property name="username" value="${ds.username}" />
+		<property name="password" value="${ds.password}" />
+		<property name="maxIdle" value="10" />
+		<property name="maxTotal" value="20" />
+		<property name="maxWaitMillis" value="-1" />
+	</bean>	
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-mariadb-config.xml" />
+	</bean>
+	
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg ref="sqlSessionFactory" />
+	</bean>
+	
+	<!-- Board -->
+	<bean id="boardService" class="com.board.service.BoardServiceImpl">
+		<property name="boardRepository" ref="boardRepository" />
+	</bean>
+	
+	<bean id="boardRepository" class="com.board.repository.BoardRepositoryImpl">
+		<property name="boardMapper" ref="boardMapper" />
+	</bean>
+	
+	<bean id="boardMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.board.mapper.BoardMapper" />
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" />  
+	</bean>
+	
+	<!-- Member -->
+	<bean id="memberService" class="com.board.service.MemberServiceImpl">
+		<property name="memberRepository" ref="memberRepository" />
+	</bean>
+
+	<bean id="memberRepository" class="com.board.repository.MemberRepositoryImpl">
+		<property name="memberMapper" ref="memberMapper" />
+	</bean>
+	
+	<bean id="memberMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.board.mapper.MemberMapper" />
+		<property name="sqlSessionTemplate" ref="sqlSessionTemplate" /> 
+	</bean>
+	
+</beans>
