@@ -164,7 +164,7 @@ $(function() {
 				"readCheck" : 0
 		};
 
-		//스크랩 알림 DB저장
+		//댓글 알림 DB저장
 		$.ajax({
 			url : "/board/saveAlarm",
 			method: "POST",
@@ -172,12 +172,13 @@ $(function() {
 			contentType: "application/json; charset=utf-8",
 			dataType : 'text',
 			success : function(data){
-				if (socket) {
+				/* if (socket) {
 					// websocket에 보내기!! (comment,댓글작성자(id),게시글작성자(id),글번호)
 					let socketMsg = "comment," + comwriter + "," + "${ board.writer }" + "," + ${ board.boardNo };
 					console.debug("sssssssmsg>>", socketMsg)
 					socket.send(socketMsg);
-				}
+				} */
+				console.log(AlarmData);
 	 
 			},
 			error : function(err){

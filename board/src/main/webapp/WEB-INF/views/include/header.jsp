@@ -35,7 +35,7 @@
 	</c:choose>
 	</div>
 	<div class="row justify-content-end">
-		<div class="alarm_box" id="divToggle" style="display: none;" >
+		<div class="bubble" id="divToggle" style="display: none;" >
 			<c:choose>
 				<c:when test="${ fn:length(alarms) > 0 }">
 					<c:forEach var="alarm" items="${ alarms }" varStatus="status">

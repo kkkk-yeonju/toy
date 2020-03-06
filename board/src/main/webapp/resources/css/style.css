@@ -1,5 +1,5 @@
 .d1 {
-	float:right;
+	/* float:right; */
 }
 
 .d1 form {
@@ -12,10 +12,10 @@
   width: 100%;
   height: 42px;
   padding-left: 10px;
-  border: 2px solid #7BA7AB;
+  border: 2px solid #343A40;
   border-radius: 5px;
   outline: none;
-  background: #F9F0DA;
+  background: #fff;
   color: #9E9C9C;
 }
 .d1 a {
@@ -25,7 +25,7 @@
   width: 42px;
   height: 42px;
   border: none;
-  background: #7BA7AB;
+  background: #343A40;
   border-radius: 0 5px 5px 0;
   cursor: pointer;
 }
@@ -33,7 +33,7 @@
   content: "\f002";
   font-family: FontAwesome;
   font-size: 16px;
-  color: #F9F0DA;
+  color: #fff;
 }
 
 .alarm_bedge {
@@ -63,8 +63,52 @@
 	height: 200px;
 	width: 300px;
 	overflow: auto; 
+	background: #fff;
 }
 
 .alarm_content {
 	border-bottom:1px solid;
 }
+
+.bubble 
+	{
+	z-index:100;
+	position: relative;
+	height: auto;
+	width: 400px;
+	padding: 10px 10px 10px 10px;
+	background: #FFFFFF;
+	border-radius: 5px;
+	border: #7F7F7F solid 1px;
+	position: absolute;
+	font-size: 16px;
+	text-align: center;
+	}
+	
+	.bubble:after 
+	{
+	content: '';
+	position: absolute;
+	border-style: solid;
+	border-width: 0 16px 20px 17.5px;
+	border-color: #FFFFFF transparent;
+	display: block;
+	width: 0;
+	z-index: 1;
+	top: -18.5px; 
+	left: 230px; 
+	}
+	
+	.bubble:before 
+	{
+	content: '';
+	position: absolute;
+	border-style: solid;
+	border-width: 0 16px 20px 17.5px;
+	border-color: #7F7F7F transparent;
+	display: block;
+	width: 0;
+	z-index: 0;
+	top: -20px;
+	left: 230px;
+	}
